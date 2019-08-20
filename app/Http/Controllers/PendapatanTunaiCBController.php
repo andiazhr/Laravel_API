@@ -12,7 +12,7 @@ class PendapatanTunaiCBController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // header("Access-Control-Allow-Origin: *");
         // $serverName = "103.105.253.194"; //serverName\instanceName
@@ -29,8 +29,26 @@ class PendapatanTunaiCBController extends Controller
 
         // echo json_encode($data);
         $tgl = date('Ymd');
-        $pendpTunaiCB = DB::Select("Exec SP_SIE_PendpTunaiCB '$tgl', '$tgl'");
-        echo json_encode($pendpTunaiCB);
+        $input = $request->segment(3);
+        $input2 = $request->segment(4);
+        $tanggal = date('Ymd', strtotime($input));
+        $tanggal2 = date('Ymd', strtotime($input2));
+        if(!($input == NULL) && $input2 == NULL){
+            $pendpTunaiCB = DB::Select("Exec SP_SIE_PendpTunaiCB '$tanggal', '$tanggal'");
+            return response()->json($pendpTunaiCB);
+        }
+        elseif(!($input2 == NULL ) && $input == NULL){
+            $pendpTunaiCB = DB::Select("Exec SP_SIE_PendpTunaiCB '$tanggal2', '$tanggal2'");
+            return response()->json($pendpTunaiCB);
+        }
+        elseif(!($input == NULL && $input2 == NULL)){
+            $pendpTunaiCB = DB::Select("Exec SP_SIE_PendpTunaiCB '$tanggal', '$tanggal2'");
+            return response()->json($pendpTunaiCB);
+        }
+        else{
+            $pendpTunaiCB = DB::Select("Exec SP_SIE_PendpTunaiCB '$tgl', '$tgl'");
+            return response()->json($pendpTunaiCB);
+        }
         // return view('index', ['pendpTunaiCB'=>$pendpTunaiCB]);
     }
 

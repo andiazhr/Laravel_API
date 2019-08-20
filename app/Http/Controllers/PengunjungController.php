@@ -12,11 +12,29 @@ class PengunjungController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $tgl = date('Ymd');
-        $pengunjung = DB::Select("Exec SP_SIE_Pengunjung '$tgl', '$tgl'");
-        echo json_encode($pengunjung);
+        $input = $request->segment(3);
+        $input2 = $request->segment(4);
+        $tanggal = date('Ymd', strtotime($input));
+        $tanggal2 = date('Ymd', strtotime($input2));
+        if(!($input == NULL) && $input2 == NULL){
+            $pengunjung = DB::Select("Exec SP_SIE_Pengunjung '$tanggal', '$tanggal'");
+            return response()->json($pengunjung);
+        }
+        elseif(!($input2 == NULL ) && $input == NULL){
+            $pengunjung = DB::Select("Exec SP_SIE_Pengunjung '$tanggal2', '$tanggal2'");
+            return response()->json($pengunjung);
+        }
+        elseif(!($input == NULL && $input2 == NULL)){
+            $pengunjung = DB::Select("Exec SP_SIE_Pengunjung '$tanggal', '$tanggal2'");
+            return response()->json($pengunjung);
+        }
+        else{
+            $pengunjung = DB::Select("Exec SP_SIE_Pengunjung '$tgl', '$tgl'");
+            return response()->json($pengunjung);
+        }
     }
 
     /**

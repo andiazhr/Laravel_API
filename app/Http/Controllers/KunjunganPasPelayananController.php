@@ -15,8 +15,28 @@ class KunjunganPasPelayananController extends Controller
     public function index()
     {
         $tgl = date('Ymd');
-        $kunjpaspelayanan = DB::Select("Exec SP_SIE_Kunjpaspelayanan '$tgl', '$tgl'");
-        echo json_encode($kunjpaspelayanan);
+        $input = $request->segment(3);
+        $input2 = $request->segment(4);
+        $tanggal = date('Ymd', strtotime($input));
+        $tanggal2 = date('Ymd', strtotime($input2));
+        // $tanggal = $request->segment(3);
+        // $tanggal2 = $request->segment(4);
+        if(!($input == NULL) && $input2 == NULL){
+            $kunjpaspelayanan = DB::Select("Exec SP_SIE_Kunjpaspelayanan '$tanggal', '$tanggal'");
+            return response()->json($kunjpaspelayanan);
+        }
+        elseif(!($input2 == NULL ) && $input == NULL){
+            $kunjpaspelayanan = DB::Select("Exec SP_SIE_Kunjpaspelayanan '$tanggal2', '$tanggal2'");
+            return response()->json($kunjpaspelayanan);
+        }
+        elseif(!($input == NULL && $input2 == NULL)){
+            $kunjpaspelayanan = DB::Select("Exec SP_SIE_Kunjpaspelayanan '$tanggal', '$tanggal2'");
+            return response()->json($kunjpaspelayanan);
+        }
+        else{
+            $kunjpaspelayanan = DB::Select("Exec SP_SIE_Kunjpaspelayanan '$tgl', '$tgl'");
+            return response()->json($kunjpaspelayanan);
+        }
     }
 
     /**

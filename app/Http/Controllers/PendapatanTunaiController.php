@@ -12,11 +12,29 @@ class PendapatanTunaiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $tgl = date('Ymd');
-        $pendpTunai = DB::Select("Exec SP_SIE_PendpTunai '$tgl', '$tgl'");
-        echo json_encode($pendpTunai);
+        $input = $request->segment(3);
+        $input2 = $request->segment(4);
+        $tanggal = date('Ymd', strtotime($input));
+        $tanggal2 = date('Ymd', strtotime($input2));
+        if(!($input == NULL) && $input2 == NULL){
+            $pendpTunai = DB::Select("Exec SP_SIE_PendpTunai '$tanggal', '$tanggal'");
+            return response()->json($pendpTunai);
+        }
+        elseif(!($input2 == NULL ) && $input == NULL){
+            $pendpTunai = DB::Select("Exec SP_SIE_PendpTunai '$tanggal2', '$tanggal2'");
+            return response()->json($pendpTunai);
+        }
+        elseif(!($input == NULL && $input2 == NULL)){
+            $pendpTunai = DB::Select("Exec SP_SIE_PendpTunai '$tanggal', '$tanggal2'");
+            return response()->json($pendpTunai);
+        }
+        else{
+            $pendpTunai = DB::Select("Exec SP_SIE_PendpTunai '$tgl', '$tgl'");
+            return response()->json($pendpTunai);
+        }
     }
 
     /**

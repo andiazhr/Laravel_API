@@ -12,11 +12,31 @@ class KunjunganPasienController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $tgl = date('Ymd');
-        $kunjpasien = DB::Select("Exec SP_SIE_Kunjpasien '$tgl', '$tgl'");
-        echo json_encode($kunjpasien);
+        $input = $request->segment(3);
+        $input2 = $request->segment(4);
+        $tanggal = date('Ymd', strtotime($input));
+        $tanggal2 = date('Ymd', strtotime($input2));
+        // $tanggal = $request->segment(3);
+        // $tanggal2 = $request->segment(4);
+        if(!($input == NULL) && $input2 == NULL){
+            $kunjpasien = DB::Select("Exec SP_SIE_Kunjpasien '$tanggal', '$tanggal'");
+            return response()->json($kunjpasien);
+        }
+        elseif(!($input2 == NULL ) && $input == NULL){
+            $kunjpasien = DB::Select("Exec SP_SIE_Kunjpasien '$tanggal2', '$tanggal2'");
+            return response()->json($kunjpasien);
+        }
+        elseif(!($input == NULL && $input2 == NULL)){
+            $kunjpasien = DB::Select("Exec SP_SIE_Kunjpasien '$tanggal', '$tanggal2'");
+            return response()->json($kunjpasien);
+        }
+        else{
+            $kunjpasien = DB::Select("Exec SP_SIE_Kunjpasien '$tgl', '$tgl'");
+            return response()->json($kunjpasien);
+        }
     }
 
     /**

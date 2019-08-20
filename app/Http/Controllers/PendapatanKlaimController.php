@@ -12,11 +12,29 @@ class PendapatanKlaimController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $tgl = date('Ymd');
-        $pendpKlaim = DB::Select("Exec SP_SIE_PendpKlaim '$tgl', '$tgl'");
-        echo json_encode($pendpKlaim);
+        $input = $request->segment(3);
+        $input2 = $request->segment(4);
+        $tanggal = date('Ymd', strtotime($input));
+        $tanggal2 = date('Ymd', strtotime($input2));
+        if(!($input == NULL) && $input2 == NULL){
+            $pendpKlaim = DB::Select("Exec SP_SIE_PendpKlaim '$tanggal', '$tanggal'");
+            return response()->json($pendpKlaim);
+        }
+        elseif(!($input2 == NULL ) && $input == NULL){
+            $pendpKlaim = DB::Select("Exec SP_SIE_PendpKlaim '$tanggal2', '$tanggal2'");
+            return response()->json($pendpKlaim);
+        }
+        elseif(!($input == NULL && $input2 == NULL)){
+            $pendpKlaim = DB::Select("Exec SP_SIE_PendpKlaim '$tanggal', '$tanggal2'");
+            return response()->json($pendpKlaim);
+        }
+        else{
+            $pendpKlaim = DB::Select("Exec SP_SIE_PendpKlaim '$tgl', '$tgl'");
+            return response()->json($pendpKlaim);
+        }
     }
 
     /**
